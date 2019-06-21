@@ -56,15 +56,16 @@ class App(QMainWindow):
             req = urllib.request.Request(self.domain + self.question_url, data=body.encode('utf8'), headers={'Content-Type': 'application/json'})
             res = urllib.request.urlopen(req)
             response = json.loads(res.read().decode('utf-8'))
-            print(response)
         except urllib.error.HTTPError as e:
             response = json.loads(e.read().decode('utf-8'))
-            print(response)
+            
         if (response.get('result') == 'correct'):
             self.questionLabel.setText('press next to continue')
             self.question_url = response.get('nextQuestion')
             self.nextButton.setEnabled(True)
             self.submitButton.setEnabled(False)
+        else:
+            self.questionLabel.setText(response.get('result'))
     
     
 if __name__ == '__main__':
