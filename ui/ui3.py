@@ -31,11 +31,21 @@ class App(QMainWindow):
         self.do_question()
     
     def do_question(self):
+        print(self.question_url)
         request = urllib.request.urlopen( ('%s%s' % (self.domain, self.question_url)))
         response = request.read().decode('utf-8')
+        print(response)
         response_json = json.loads(response)
         self.message = response_json.get('message')
-        self.question_url = response_json.get('nextQuestion')
+        question_url = response_json.get('nextQuestion')
+        if question_url:
+            self.question_url = question_url
+            self.nextButton.setEnabled(True)
+            self.submitButton.setEnabled(False)
+        else:
+            self.nextButton.setEnabled(False)
+            self.submitButton.setEnabled(True)
+            
         self.questionLabel.setText(self.message)
     
     
