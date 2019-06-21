@@ -25,18 +25,19 @@ class App(QMainWindow):
         self.nextButton.setGeometry(300, 250, 100, 30)
         self.nextButton.clicked.connect(self.do_question)
         self.submitButton = QPushButton('Submit', self)
+        self.submitButton.clicked.connect(self.try_answer)
         self.submitButton.setGeometry(200, 250, 100, 30) 
         self.resize(600, 300)
         self.show()
         self.do_question()
     
     def do_question(self):
-        print(self.question_url)
         request = urllib.request.urlopen( ('%s%s' % (self.domain, self.question_url)))
         response = request.read().decode('utf-8')
         print(response)
         response_json = json.loads(response)
         self.message = response_json.get('message')
+        self.questionLabel.setText(self.message)
         question_url = response_json.get('nextQuestion')
         if question_url:
             self.question_url = question_url
@@ -46,8 +47,20 @@ class App(QMainWindow):
             self.nextButton.setEnabled(False)
             self.submitButton.setEnabled(True)
             
-        self.questionLabel.setText(self.message)
-    
+
+    def try_answer(self):
+        answer = self.answerInput.toPlainText()
+        print(answer)
+        self.answerInput.setText('')
+        body = json.dumps({ 'answer': answer })
+        try:
+            req = urllib.request.Request(self.domain + self.question_url, data=body.encode('utf8'), headers={'Content-Type': 'application/json'})
+            res = urllib.request.urlopen(req)
+            response = json.loads(res.read().decode('utf-8'))
+            print(response)
+        except urllib.error.HTTPError as e:
+            response = json.loads(e.read().decode('utf-8'))
+            print(response)
     
     
 if __name__ == '__main__':
