@@ -23,20 +23,19 @@ class App(QMainWindow):
         self.answerInput.setGeometry(50, 200, 500, 50)
         self.nextButton = QPushButton('Next', self)
         self.nextButton.setGeometry(300, 250, 100, 30)
+        self.nextButton.clicked.connect(self.do_question)
         self.submitButton = QPushButton('Submit', self)
         self.submitButton.setGeometry(200, 250, 100, 30) 
         self.resize(600, 300)
         self.show()
-        self.do_question(self.domain, self.question_url)
-        
-
+        self.do_question()
     
-    def do_question(self, domain, question_url):
-        request = urllib.request.urlopen( ('%s%s' % (domain, question_url)))
+    def do_question(self):
+        request = urllib.request.urlopen( ('%s%s' % (self.domain, self.question_url)))
         response = request.read().decode('utf-8')
         response_json = json.loads(response)
-        self.message = response_json['message']
-        self.question_url = response_json['nextQuestion']
+        self.message = response_json.get('message')
+        self.question_url = response_json.get('nextQuestion')
         self.questionLabel.setText(self.message)
     
     
