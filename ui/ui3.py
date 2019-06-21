@@ -18,16 +18,16 @@ class App(QMainWindow):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.questionLabel = QLabel(self)
-        self.questionLabel.setGeometry(50, 50, 500, 150)
+        self.questionLabel.setGeometry(50, 50, 500, 450)
         self.answerInput = QTextEdit(self)
-        self.answerInput.setGeometry(50, 200, 500, 50)
+        self.answerInput.setGeometry(50, 500, 500, 50)
         self.nextButton = QPushButton('Next', self)
-        self.nextButton.setGeometry(300, 250, 100, 30)
+        self.nextButton.setGeometry(300, 550, 100, 30)
         self.nextButton.clicked.connect(self.do_question)
         self.submitButton = QPushButton('Submit', self)
         self.submitButton.clicked.connect(self.try_answer)
-        self.submitButton.setGeometry(200, 250, 100, 30) 
-        self.resize(600, 300)
+        self.submitButton.setGeometry(200, 550, 100, 30) 
+        self.resize(600, 600)
         self.show()
         self.do_question()
     
@@ -37,6 +37,8 @@ class App(QMainWindow):
         print(response)
         response_json = json.loads(response)
         self.message = response_json.get('message')
+        if(response_json.get('numbers')):
+            self.message += 'numbers: '+ str(response_json.get('numbers'))
         self.questionLabel.setText(self.message)
         question_url = response_json.get('nextQuestion')
         if question_url:
