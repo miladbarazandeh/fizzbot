@@ -46,8 +46,7 @@ class App(QMainWindow):
         else:
             self.nextButton.setEnabled(False)
             self.submitButton.setEnabled(True)
-            
-
+    
     def try_answer(self):
         answer = self.answerInput.toPlainText()
         print(answer)
@@ -61,6 +60,11 @@ class App(QMainWindow):
         except urllib.error.HTTPError as e:
             response = json.loads(e.read().decode('utf-8'))
             print(response)
+        if (response.get('result') == 'correct'):
+            self.questionLabel.setText('press next to continue')
+            self.question_url = response.get('nextQuestion')
+            self.nextButton.setEnabled(True)
+            self.submitButton.setEnabled(False)
     
     
 if __name__ == '__main__':
