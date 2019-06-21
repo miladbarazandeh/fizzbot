@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QLabel, QPushBut
 from PyQt5.QtGui import QIcon
 import urllib.request
 import urllib.error
+import json
 
 
 class App(QMainWindow):
@@ -10,7 +11,8 @@ class App(QMainWindow):
         super().__init__()
         self.title = 'FizzBot'
         self.domain = 'https://api.noopschallenge.com'
-        self.question_url = '/fizzbot'
+        self.question_url= '/fizzbot'
+        self.message = ''
         self.initUI()
     
     def initUI(self):
@@ -31,8 +33,11 @@ class App(QMainWindow):
     
     def do_question(self, domain, question_url):
         request = urllib.request.urlopen( ('%s%s' % (domain, question_url)))
-        question = request.read().decode('utf-8')
-        self.questionLabel.setText(question)
+        response = request.read().decode('utf-8')
+        response_json = json.loads(response)
+        self.message = response_json['message']
+        self.question_url = response_json['nextQuestion']
+        self.questionLabel.setText(self.message)
     
     
     
